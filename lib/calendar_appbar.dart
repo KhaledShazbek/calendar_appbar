@@ -1,5 +1,7 @@
 library calendar_appbar;
 
+import 'dart:developer';
+
 ///adding necesarry packages
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -73,10 +75,12 @@ class CalendarAppBar extends StatefulWidget implements PreferredSizeWidget {
   @override
 
   ///creating a getter for [preferredSize]
-  Size get preferredSize => new Size.fromHeight(250.0);
+  Size get preferredSize => const Size.fromHeight(250.0);
 }
 
 class _CalendarAppBarState extends State<CalendarAppBar> {
+  bool init = true;
+
   ///defininon of [selectedDate] variable of current selected date
   late DateTime selectedDate;
 
@@ -118,7 +122,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
   void initState() {
     setState(() {
       ///initializing accent
-      accent = widget.accent ?? Color(0xFF0039D9);
+      accent = widget.accent ?? const Color(0xFF0039D9);
 
       ///initilizing first date
       firstDate = widget.firstDate ?? DateTime(1950);
@@ -148,7 +152,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
       initializeDateFormatting(_locale);
 
       ///initializing position to 1
-      position = widget.lastDate.difference(selectedDate).inDays + 2;
+      position = 61;
     });
 
     ///changing event list to specific form
@@ -162,23 +166,19 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
   }
 
   ///definition of scroll controller
-  ScrollController scrollController = new ScrollController();
+  ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    
+    ///changing all dates to correct form for easier
+    //
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      var widthUnitTemp = MediaQuery.of(context).size.width / 5 - 4.0;
-  
-      if (position > 4) {
-        scrollController.animateTo(
-          widthUnitTemp * (position - 4),
-          duration: Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
+      if (init) {
+        var widthUnit = MediaQuery.of(context).size.width / 5 - 4.0;
+        scrollController.jumpTo(widthUnit * 57);
+        init = false;
       }
     });
-    ///changing all dates to correct form for easier
 
     ///intitializing first date and setting it to midnight
     DateTime first =
@@ -233,7 +233,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                 //animated scroll
                 scrollController.animateTo(
                     (offset / widthUnit).round() * (widthUnit),
-                    duration: Duration(milliseconds: 100),
+                    duration: const Duration(milliseconds: 100),
                     curve: Curves.easeInOut);
               }
 
@@ -242,7 +242,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
               if (referenceDate.toString().split(" ").first !=
                   selectedDate.toString().split(" ").first) {
                 ///wait that animation is finnished and than call function [onDateChange]
-                Future.delayed(Duration(milliseconds: 100), () {
+                Future.delayed(const Duration(milliseconds: 100), () {
                   widget.onDateChanged(selectedDate);
                 });
                 setState(() {
@@ -252,15 +252,16 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
               }
             }
 
-            ///if the position of current selected card is out of screen when
-            ///scrolling to the left
+            // /if the position of current selected card is out of screen when
+            // /scrolling to the left
             if (offset > position * widthUnit - (widthUnit / 2)) {
               setState(() {
                 ///increase position by one
-                position = position + 1;
+                // position = position + 1;
+                log(position.toString());
 
                 ///set selectedDate on previous date
-                selectedDate = selectedDate.subtract(Duration(days: 1));
+                // selectedDate = selectedDate.subtract(Duration(days: 1));
 
                 ///adding hapric feedback in the future
                 //HapticFeedback.lightImpact();
@@ -272,15 +273,20 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
             else if (offset + width < position * widthUnit - (widthUnit / 2)) {
               setState(() {
                 ///decrease position by one
-                position = position - 1;
+                // position = position - 1;
+                log(position.toString());
 
                 ///set selectedDate on previous date
-                selectedDate = selectedDate.add(Duration(days: 1));
+                // selectedDate = selectedDate.add(Duration(days: 1));
 
                 ///adding hapric feedback in the future
                 //HapticFeedback.lightImpact();
               });
             }
+            // Future.delayed(Duration(milliseconds: 500))
+            //     .then((value) => scrollController.jumpTo(widthUnit * 57));
+            // scrollController.jumpTo(widthUnit * 57);
+
             //unnecesary return
             return true;
           },
@@ -296,7 +302,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
               scrollDirection: Axis.horizontal,
               reverse: true,
               controller: scrollController,
-              physics: BouncingScrollPhysics(
+              physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
               ),
               itemCount: pastDates.length,
@@ -323,7 +329,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
 
                     ///different UI for nonselected containers and the selected ones
                     ///this is the definition of the main container of calendar card
-                    child: Container(
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width / 5 - 4.0,
                       child: Align(
                         alignment: Alignment.center,
@@ -335,20 +341,22 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                             width: MediaQuery.of(context).size.width / 5 - 4.0,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
-                              color: isSelected ? white : null,
+                              color: isSelected
+                                  ? Theme.of(context).scaffoldBackgroundColor
+                                  : null,
                               boxShadow: [
                                 isSelected
                                     ? BoxShadow(
                                         color: Colors.black.withOpacity(0.2),
                                         spreadRadius: 1,
                                         blurRadius: 10,
-                                        offset: Offset(0, 3),
+                                        offset: const Offset(0, 3),
                                       )
                                     : BoxShadow(
                                         color: Colors.grey.withOpacity(0.0),
                                         spreadRadius: 5,
                                         blurRadius: 20,
-                                        offset: Offset(0, 3),
+                                        offset: const Offset(0, 3),
                                       )
                               ],
                             ),
@@ -370,10 +378,10 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                               : white.withOpacity(0.6),
                                         ),
                                       )
-                                    : SizedBox(
+                                    : const SizedBox(
                                         height: 5.0,
                                       ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
 
                                 ///date number
                                 Text(
@@ -385,7 +393,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                                           : white.withOpacity(0.6),
                                       fontWeight: FontWeight.w500),
                                 ),
-                                SizedBox(height: 5),
+                                const SizedBox(height: 5),
 
                                 ///day of the week
                                 Text(
@@ -417,7 +425,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
         context: context,
         isScrollControlled: true,
         backgroundColor: white,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
         ),
@@ -433,7 +441,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
           } else {
             height = (MediaQuery.of(context).size.height - 100.0);
           }
-          return Container(
+          return SizedBox(
             height: height,
 
             ///usage of full calender widget, which is defined below
@@ -483,7 +491,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                 double widthUnit = MediaQuery.of(context).size.width / 5 - 4.0;
 
                 ///wait to modal bottom sheet to hide
-                Future.delayed(Duration(milliseconds: 100), () {
+                Future.delayed(const Duration(milliseconds: 100), () {
                   ///definition maximal offset based on maxScrollExtent
                   double maxOffset = scrollController.position.maxScrollExtent;
 
@@ -495,17 +503,19 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
                       (offset + (widthUnit * positionDifference));
 
                   ///if current offset is out of bounderies set it to maximal or minimal offset
-                  if (newOffset > maxOffset)
+                  if (newOffset > maxOffset) {
                     newOffset = maxOffset;
-                  else if (newOffset < minOffset) newOffset = minOffset;
+                  } else if (newOffset < minOffset) {
+                    newOffset = minOffset;
+                  }
 
                   ///scroll the calendar scroller to the selected date
                   scrollController.animateTo(newOffset,
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut);
 
                   ///wait on animation to be finished
-                  Future.delayed(Duration(milliseconds: 550), () {
+                  Future.delayed(const Duration(milliseconds: 550), () {
                     setState(() {
                       ///set slected date to current value
                       selectedDate = value;
@@ -529,7 +539,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
     }
 
     ///UI of the whole appbar
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: 240.0,
 
@@ -548,7 +558,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
               top: 59.0,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: padding),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width - (padding * 2),
                   child: backButton
                       ? Row(
@@ -643,7 +653,7 @@ class FullCalendar extends StatefulWidget {
   ///function which returns currently selected date
   final Function onDateChange;
 
-  FullCalendar({
+  const FullCalendar({
     Key? key,
     this.accent,
     this.endDate,
@@ -672,6 +682,7 @@ class _FullCalendarState extends State<FullCalendar> {
   List<String>? events = [];
 
   ///transforming variables to correct form
+  @override
   void initState() {
     setState(() {
       ///parsing [startDate] String to DateTime
@@ -683,7 +694,7 @@ class _FullCalendarState extends State<FullCalendar> {
           "${widget.endDate.toString().split(" ").first} 23:00:00.000");
 
       ///initializing [events]
-      events = widget.events != null ? widget.events : null;
+      events = widget.events;
     });
     super.initState();
   }
@@ -705,7 +716,7 @@ class _FullCalendarState extends State<FullCalendar> {
     ///parsing [partsStart] List of Strings to DateTime
     DateTime lastDate = DateTime.parse(
             "${partsEnd.first}-${(int.parse(partsEnd[1]) + 1).toString().padLeft(2, '0')}-01 23:00:00.000")
-        .subtract(Duration(days: 1));
+        .subtract(const Duration(days: 1));
 
     ///calculating the height based of the screen height
     double width = MediaQuery.of(context).size.width - (2 * widget.padding!);
@@ -723,7 +734,7 @@ class _FullCalendarState extends State<FullCalendar> {
       dates.add(newDate);
 
       ///adding next date
-      referenceDate = newDate.add(Duration(days: 1));
+      referenceDate = newDate.add(const Duration(days: 1));
     }
 
     ///check if range is in the same month
@@ -747,10 +758,10 @@ class _FullCalendarState extends State<FullCalendar> {
       return Padding(
         padding:
             EdgeInsets.fromLTRB(widget.padding!, 40.0, widget.padding!, 0.0),
-        child: Container(
+        child: SizedBox(
           ///scrolling of calendar
           child: ListView.builder(
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               reverse: true,
               itemCount: months.length,
               itemBuilder: (context, index) {
@@ -818,7 +829,7 @@ class _FullCalendarState extends State<FullCalendar> {
     ///comparing the date of current building widget with selected widget
     bool isSelectedDate = date.toString().split(" ").first ==
         widget.selectedDate.toString().split(" ").first;
-    return Container(
+    return SizedBox(
       child: GestureDetector(
         onTap: () => outOfRange ? null : widget.onDateChange(date),
         child: Container(
@@ -831,7 +842,7 @@ class _FullCalendarState extends State<FullCalendar> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 5.0,
               ),
               Padding(
@@ -862,7 +873,7 @@ class _FullCalendarState extends State<FullCalendar> {
                           shape: BoxShape.circle,
                           color: isSelectedDate ? widget.white : widget.accent),
                     )
-                  : SizedBox(height: 5.0),
+                  : const SizedBox(height: 5.0),
             ],
           ),
         ),
@@ -877,14 +888,14 @@ class _FullCalendarState extends State<FullCalendar> {
     DateTime first = dates.first;
     while (DateFormat("E").format(dates.first) != "Mon") {
       ///add "empty fields" to the list to get offset of the days
-      dates.add(dates.first.subtract(Duration(days: 1)));
+      dates.add(dates.first.subtract(const Duration(days: 1)));
 
       ///sort all the dates
       dates.sort();
     }
 
     ///logically show all the dates in the month
-    return Container(
+    return SizedBox(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -902,7 +913,7 @@ class _FullCalendarState extends State<FullCalendar> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
-            child: Container(
+            child: SizedBox(
               ///calculate the number of rows with dates based on number of days in the month
               height: dates.length > 28
                   ? dates.length > 35
@@ -916,8 +927,8 @@ class _FullCalendarState extends State<FullCalendar> {
                 itemCount: dates.length,
 
                 ///Since each calendar is drawn separatly it shouldn't be scrollable
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 7),
                 itemBuilder: (context, index) {
                   ///create date for each day in the month
