@@ -168,11 +168,11 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
   Widget build(BuildContext context) {
     
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      widthUnit = MediaQuery.of(context).size.width / 5 - 4.0;
+      var widthUnitTemp = MediaQuery.of(context).size.width / 5 - 4.0;
   
       if (position > 4) {
         scrollController.animateTo(
-          widthUnit * (position - 4),
+          widthUnitTemp * (position - 4),
           duration: Duration(milliseconds: 500),
           curve: Curves.easeInOut,
         );
