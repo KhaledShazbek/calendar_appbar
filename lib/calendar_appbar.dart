@@ -258,7 +258,6 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
               setState(() {
                 ///increase position by one
                 // position = position + 1;
-                log(position.toString());
 
                 ///set selectedDate on previous date
                 // selectedDate = selectedDate.subtract(Duration(days: 1));
@@ -274,7 +273,6 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
               setState(() {
                 ///decrease position by one
                 // position = position - 1;
-                log(position.toString());
 
                 ///set selectedDate on previous date
                 // selectedDate = selectedDate.add(Duration(days: 1));
