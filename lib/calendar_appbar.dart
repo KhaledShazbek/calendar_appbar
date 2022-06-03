@@ -1,7 +1,5 @@
 library calendar_appbar;
 
-import 'dart:developer';
-
 ///adding necesarry packages
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -422,7 +420,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
       showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
-        backgroundColor: white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
@@ -816,7 +814,7 @@ class _FullCalendarState extends State<FullCalendar> {
         style: TextStyle(
             fontSize: 12.0,
             fontWeight: FontWeight.w400,
-            color: widget.black!.withOpacity(0.8)),
+            color: Theme.of(context).primaryColorLight),
       ),
     );
   }
@@ -854,11 +852,13 @@ class _FullCalendarState extends State<FullCalendar> {
                       ///the UI is different for the dates out of range
                       color: outOfRange
                           ? isSelectedDate
-                              ? widget.white!.withOpacity(0.9)
-                              : widget.black!.withOpacity(0.4)
-                          : isSelectedDate
-                              ? widget.white
-                              : widget.black),
+                              ? Theme.of(context)
+                                  .primaryColorLight
+                                  .withOpacity(0.9)
+                              : Theme.of(context)
+                                  .primaryColorLight
+                                  .withOpacity(0.4)
+                          : Theme.of(context).primaryColorLight),
                 ),
               ),
 
@@ -869,7 +869,7 @@ class _FullCalendarState extends State<FullCalendar> {
                       width: 5.0,
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isSelectedDate ? widget.white : widget.accent),
+                          color: Theme.of(context).primaryColorLight),
                     )
                   : const SizedBox(height: 5.0),
             ],
@@ -902,7 +902,7 @@ class _FullCalendarState extends State<FullCalendar> {
             DateFormat.MMMM(Locale(locale!).toString()).format(first),
             style: TextStyle(
                 fontSize: 18.0,
-                color: widget.black,
+                color: Theme.of(context).primaryColorLight,
                 fontWeight: FontWeight.w400),
           ),
           Padding(
