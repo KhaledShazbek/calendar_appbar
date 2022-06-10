@@ -170,7 +170,7 @@ class _CalendarAppBarState extends State<CalendarAppBar> {
   Widget build(BuildContext context) {
     ///changing all dates to correct form for easier
     //
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (init) {
         var widthUnit = MediaQuery.of(context).size.width / 5 - 4.0;
         scrollController.jumpTo(widthUnit * 57);
